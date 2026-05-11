@@ -8,7 +8,7 @@ import { utf8ToBytes, hexToBytes, toHex } from 'ethereum-cryptography/utils';
 hashes.hmacSha256 = (key, msg) => hmac(sha256, key, msg);
 hashes.sha256 = sha256;
 
-function Transfer({ address, setBalance }) {
+function Transfer({ privateKey, setBalance }) {
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
 
@@ -18,13 +18,12 @@ function Transfer({ address, setBalance }) {
     evt.preventDefault();
 
     try {
-    // phase 3
     const msg = { recipient, amount: parseInt(sendAmount) };
     const msgBytes = utf8ToBytes(JSON.stringify(msg));
     const msgHash = sha256(msgBytes);
-    const senderPrivateKey = address;
-    const senderPrivateKeyBytes = hexToBytes(senderPrivateKey);
-    const senderSignature = sign(msgHash, senderPrivateKeyBytes, { format: 'recovered', prehash: false });
+    const senderPrivateKeyBytes = hexToBytes(privateKey);
+    const senderSignature = sign(
+      msgHash, senderPrivateKeyBytes, { format: 'recovered', prehash: false });
 
     const {
       data: { balance }

@@ -8,14 +8,13 @@ const app = express();
 const cors = require("cors");
 const port = 3042;
 
+const FIVE_MINUTES = 5 * 60 * 1000;
+
+// data structure: <public_key, nonces_map>
+const NONCES_MEM = new Map(); // TODO: remove nonces older than the temporal window
+
 app.use(cors());
 app.use(express.json());
-
-// const balances = {
-//   "0x1": 100,
-//   "0x2": 50,
-//   "0x3": 75,
-// };
 
 const funds = [100, 50, 75];
 const accounts = Array.from({ length: 3 }, (_, i) => new Account(funds[i]));
@@ -36,8 +35,13 @@ app.get("/balance/:address", (req, res) => {
 app.post("/send", (req, res) => {
   const { signature, recipient, amount, timestamp, nonce } = req.body;
 
-  // recreate msg and hash it
+  // recreate msg
   const msg = { recipient, amount, timestamp, nonce };
+
+  // apply timestamp guard
+  if (isOutdated(msg))
+    return res.status(400).send({ message: 'Timestamp out of window' });
+
   const msgBytes = utf8ToBytes(JSON.stringify(msg));
   const msgHash = sha256(msgBytes);
 
@@ -64,6 +68,11 @@ app.post("/send", (req, res) => {
   // reject invalid signatures
   if (!isValid)
     return res.status(400).send({ message: 'Invalid signature!' });
+  
+  // apply reply guard
+  if (isDuplicated(senderPublicKey, msg))
+    return res.status(400).send({ message: 'Replay detected' });
+  registerNonce(senderPublicKey, msg);
 
   setInitialBalance(sender);
   setInitialBalance(recipient);
@@ -76,6 +85,21 @@ app.post("/send", (req, res) => {
     res.send({ balance: balances[sender] });
   }
 });
+
+function isDuplicated(publicKey, msg) {
+  return NONCES_MEM.has(publicKey) && NONCES_MEM.get(publicKey).has(msg.nonce)
+}
+
+function registerNonce(publicKey, msg) {
+  if (NONCES_MEM.has(publicKey))
+    NONCES_MEM.get(publicKey).set(msg.nonce, msg.timestamp);
+  else
+    NONCES_MEM.set(publicKey, new Map([[msg.nonce, msg.timestamp]]));
+}
+
+function isOutdated(msg) {
+  return (Math.abs(Date.now() - msg.timestamp) > FIVE_MINUTES) 
+}
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}!`);

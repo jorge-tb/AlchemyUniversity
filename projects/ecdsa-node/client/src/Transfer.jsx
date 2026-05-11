@@ -2,6 +2,7 @@ import { useState } from "react";
 import server from "./server";
 import { sign, hashes } from '@noble/secp256k1';
 import { sha256 } from '@noble/hashes/sha256';
+import { randomBytes } from "@noble/hashes/utils";
 import { hmac } from '@noble/hashes/hmac';
 import { utf8ToBytes, hexToBytes, toHex } from 'ethereum-cryptography/utils';
 
@@ -18,21 +19,26 @@ function Transfer({ privateKey, setBalance }) {
     evt.preventDefault();
 
     try {
-    const msg = { recipient, amount: parseInt(sendAmount) };
-    const msgBytes = utf8ToBytes(JSON.stringify(msg));
-    const msgHash = sha256(msgBytes);
-    const senderPrivateKeyBytes = hexToBytes(privateKey);
-    const senderSignature = sign(
-      msgHash, senderPrivateKeyBytes, { format: 'recovered', prehash: false });
+      const msg = {
+        recipient, 
+        amount: parseInt(sendAmount),
+        timestamp: Date.now(),
+        nonce: toHex(randomBytes(16))
+      };
+      const msgBytes = utf8ToBytes(JSON.stringify(msg));
+      const msgHash = sha256(msgBytes);
+      const senderPrivateKeyBytes = hexToBytes(privateKey);
+      const senderSignature = sign(
+        msgHash, senderPrivateKeyBytes, { format: 'recovered', prehash: false });
 
-    const {
-      data: { balance }
-    } = await server.post(`send`, {
-      sender: toHex(senderSignature),
-      ...msg
-    });
+      const {
+        data: { balance }
+      } = await server.post(`send`, {
+        signature: toHex(senderSignature),
+        ...msg
+      });
 
-    setBalance(balance);
+      setBalance(balance);
     } catch (ex) {
       alert(ex.response.data.message);
     }

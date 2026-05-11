@@ -1,7 +1,6 @@
 import { useState } from "react";
 import server from "./server";
 import { sign, hashes } from '@noble/secp256k1';
-// import secp from 'ethereum-cryptography/secp256k1';
 import { sha256 } from '@noble/hashes/sha256';
 import { hmac } from '@noble/hashes/hmac';
 import { utf8ToBytes, hexToBytes, toHex } from 'ethereum-cryptography/utils';
@@ -19,28 +18,13 @@ function Transfer({ address, setBalance }) {
     evt.preventDefault();
 
     try {
-      // const {
-      //   data: { balance },
-      // } = await server.post(`send`, {
-      //   sender: address,
-      //   amount: parseInt(sendAmount),
-      //   recipient,
-      // });
-
     // phase 3
     const msg = { recipient, amount: parseInt(sendAmount) };
     const msgBytes = utf8ToBytes(JSON.stringify(msg));
     const msgHash = sha256(msgBytes);
-
-    console.log(`hex msgHash: -> ${toHex(msgHash)}`);
-
     const senderPrivateKey = address;
     const senderPrivateKeyBytes = hexToBytes(senderPrivateKey);
     const senderSignature = sign(msgHash, senderPrivateKeyBytes, { format: 'recovered', prehash: false });
-
-    console.log('CLIENT sig length:', senderSignature.length); // expect 65
-    console.log('CLIENT sig hex:', toHex(senderSignature));    // expect 130 chars
-    console.log('CLIENT sig hex length:', toHex(senderSignature).length);
 
     const {
       data: { balance }

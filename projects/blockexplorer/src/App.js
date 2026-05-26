@@ -19,7 +19,6 @@ function App() {
 
   return (
     <div className="App">
-      <header>Block Number: {blockNumber}</header>
       {selectedTx ? (
         <Transaction hash={selectedTx} onBack={() => setSelectedTx(null)} />
       ) : (

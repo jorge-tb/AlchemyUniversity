@@ -1,0 +1,62 @@
+.crystal-cube {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  perspective: 800px;
+  margin-left: 12px;
+  vertical-align: -6px;
+  animation: cube-iridescent 5s ease-in-out infinite alternate;
+}
+
+.crystal-cube .cube {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: cube-spin 6s linear infinite;
+}
+
+.crystal-cube .face {
+  display: block;
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(120, 160, 230, 0.95);
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.55);
+}
+
+.crystal-cube .front  {
+  background: linear-gradient(135deg, rgba(173, 216, 230, 0.55), rgba(135, 206, 250, 0.30));
+  transform: translateZ(16px);
+}
+.crystal-cube .back   {
+  background: linear-gradient(135deg, rgba(200, 180, 255, 0.55), rgba(150, 150, 230, 0.30));
+  transform: rotateY(180deg) translateZ(16px);
+}
+.crystal-cube .right  {
+  background: linear-gradient(135deg, rgba(180, 235, 220, 0.55), rgba(120, 200, 200, 0.30));
+  transform: rotateY(90deg)  translateZ(16px);
+}
+.crystal-cube .left   {
+  background: linear-gradient(135deg, rgba(220, 195, 255, 0.55), rgba(180, 160, 230, 0.30));
+  transform: rotateY(-90deg) translateZ(16px);
+}
+.crystal-cube .top    {
+  background: linear-gradient(135deg, rgba(255, 220, 235, 0.55), rgba(220, 180, 210, 0.30));
+  transform: rotateX(90deg)  translateZ(16px);
+}
+.crystal-cube .bottom {
+  background: linear-gradient(135deg, rgba(190, 230, 255, 0.55), rgba(140, 200, 240, 0.30));
+  transform: rotateX(-90deg) translateZ(16px);
+}
+
+@keyframes cube-spin {
+  from { transform: rotateX(0deg)   rotateY(0deg);   }
+  to   { transform: rotateX(360deg) rotateY(360deg); }
+}
+
+@keyframes cube-iridescent {
+  0%   { filter: hue-rotate(-30deg) saturate(1.3); }
+  100% { filter: hue-rotate(35deg)  saturate(1.3); }
+}

@@ -1,0 +1,50 @@
+.BlockData {
+  text-align: left;
+}
+
+.BlockData h2 {
+  margin: 16px 0;
+}
+
+.BlockData table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.BlockData td {
+  padding: 6px 12px;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.BlockData td:first-child {
+  width: 180px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #555;
+}
+
+.tx-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  max-height: 360px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.tx-list li {
+  padding: 6px 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.tx-list li:last-child {
+  border-bottom: none;
+}

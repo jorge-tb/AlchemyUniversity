@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { alchemy } from '../../AlchemyClient';
 import './Block.css';
 
-export function Block({ number }) {
+export function Block({ number, onSelectTx }) {
   const [blockData, setBlockData] = useState();
 
   useEffect(() => {
@@ -111,7 +111,16 @@ export function Block({ number }) {
         </summary>
         <ul className="tx-list">
           {blockData.transactions?.map((tx) => (
-            <li key={tx} title={tx}>{shorten(tx)}</li>
+            <li key={tx}>
+              <button
+                type="button"
+                className="tx-link"
+                title={tx}
+                onClick={() => onSelectTx?.(tx)}
+              >
+                {shorten(tx)}
+              </button>
+            </li>
           ))}
         </ul>
       </details>

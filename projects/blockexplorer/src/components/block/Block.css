@@ -39,12 +39,27 @@
 }
 
 .tx-list li {
-  padding: 6px 12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 13px;
   border-bottom: 1px solid #f5f5f5;
 }
 
 .tx-list li:last-child {
   border-bottom: none;
+}
+
+.tx-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  color: #0366d6;
+  cursor: pointer;
+}
+
+.tx-link:hover {
+  background: #f5f9ff;
+  text-decoration: underline;
 }

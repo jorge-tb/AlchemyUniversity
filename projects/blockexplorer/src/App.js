@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { alchemy } from './AlchemyClient';
 import { Block } from './components/block/Block';
+import { Transaction } from './components/transaction/Transaction';
 
 import './App.css';
 
 function App() {
   const [blockNumber, setBlockNumber] = useState();
+  const [selectedTx, setSelectedTx] = useState(null);
 
   useEffect(() => {
     async function getBlockNumber() {
@@ -17,10 +19,14 @@ function App() {
 
   return (
     <div className="App">
-      Block Number: {blockNumber}
-      { blockNumber && <Block number={blockNumber}></Block> }
+      <header>Block Number: {blockNumber}</header>
+      {selectedTx ? (
+        <Transaction hash={selectedTx} onBack={() => setSelectedTx(null)} />
+      ) : (
+        blockNumber && <Block number={blockNumber} onSelectTx={setSelectedTx} />
+      )}
     </div>
-  )
+  );
 }
 
 export default App;

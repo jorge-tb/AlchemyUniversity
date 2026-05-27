@@ -27,12 +27,6 @@ export function Block({ number, onSelectTx }) {
     return `${date.toLocaleString()} (${ts})`;
   };
 
-  // Helper: shorten long hashes for display
-  const shorten = (hash) => {
-    if (!hash) return '';
-    return `${hash.slice(0, 10)}...${hash.slice(-8)}`;
-  };
-
   // Helper: decode the hex extraData into UTF-8 if possible (builders often
   // embed a signature like "Titan (titanbuilder.xyz)")
   const decodeExtraData = (hex) => {
@@ -56,11 +50,11 @@ export function Block({ number, onSelectTx }) {
         <tbody>
           <tr>
             <td>Hash</td>
-            <td title={blockData.hash}>{shorten(blockData.hash)}</td>
+            <td>{blockData.hash}</td>
           </tr>
           <tr>
             <td>Parent Hash</td>
-            <td title={blockData.parentHash}>{shorten(blockData.parentHash)}</td>
+            <td>{blockData.parentHash}</td>
           </tr>
           <tr>
             <td>Number</td>
@@ -88,7 +82,7 @@ export function Block({ number, onSelectTx }) {
           </tr>
           <tr>
             <td>Miner</td>
-            <td title={blockData.miner}>{blockData.miner}</td>
+            <td>{blockData.miner}</td>
           </tr>
           <tr>
             <td>Extra Data</td>
@@ -115,10 +109,9 @@ export function Block({ number, onSelectTx }) {
               <button
                 type="button"
                 className="tx-link"
-                title={tx}
                 onClick={() => onSelectTx?.(tx)}
               >
-                {shorten(tx)}
+                {tx}
               </button>
             </li>
           ))}

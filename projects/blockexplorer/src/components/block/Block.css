@@ -57,6 +57,7 @@
   font-size: 13px;
   color: #0366d6;
   cursor: pointer;
+  word-break: break-all;
 }
 
 .tx-link:hover {

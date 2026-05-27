@@ -1,9 +1,28 @@
+import { useEffect } from 'react';
 import { CrystalCube } from '../crystal-cube/CrystalCube';
 import './BlockNavigator.css';
 
 export function BlockNavigator({ number, latest, onPrev, onNext }) {
   const canPrev = number > 0;
   const canNext = number < latest;
+
+  useEffect(() => {
+    const handler = (e) => {
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (e.key === 'ArrowLeft' && canPrev) {
+        e.preventDefault();
+        onPrev();
+      } else if (e.key === 'ArrowRight' && canNext) {
+        e.preventDefault();
+        onNext();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [canPrev, canNext, onPrev, onNext]);
 
   const slots = [];
   if (canPrev && number - 2 >= 0)       slots.push({ id: number - 2, slot: 'off-left' });
@@ -46,6 +65,7 @@ export function BlockNavigator({ number, latest, onPrev, onNext }) {
               tabIndex={onClick ? 0 : -1}
               disabled={!onClick}
               onClick={onClick}
+              aria-keyshortcuts={slot === 'left' ? 'ArrowLeft' : slot === 'right' ? 'ArrowRight' : undefined}
             >
               <CrystalCube />
             </button>

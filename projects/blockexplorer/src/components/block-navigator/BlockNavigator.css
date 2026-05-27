@@ -1,0 +1,87 @@
+.block-navigator {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to top, rgba(40, 50, 90, 0.08), transparent);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.bn-stage {
+  position: relative;
+  width: 320px;
+  height: 100%;
+  pointer-events: auto;
+}
+
+.bn-slot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  transform-origin: center;
+  transition:
+    transform 450ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity   450ms ease,
+    filter    450ms ease;
+}
+
+.bn-slot:disabled {
+  opacity: inherit;
+  cursor: default;
+}
+
+.bn-slot:focus-visible {
+  outline: 2px solid rgba(120, 160, 230, 0.9);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+
+.bn-slot[data-slot="center"] {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  filter: blur(0);
+  z-index: 3;
+  cursor: default;
+}
+
+.bn-slot[data-slot="left"],
+.bn-slot[data-slot="right"] {
+  opacity: 0.55;
+  filter: blur(2px);
+  z-index: 2;
+  cursor: pointer;
+}
+
+.bn-slot[data-slot="left"]  { transform: translate(calc(-50% - 110px), calc(-50% - 8px)) scale(0.55); }
+.bn-slot[data-slot="right"] { transform: translate(calc(-50% + 110px), calc(-50% - 8px)) scale(0.55); }
+
+.bn-slot[data-slot="left"]:hover,
+.bn-slot[data-slot="right"]:hover {
+  opacity: 0.9;
+  filter: blur(1px);
+}
+
+.bn-slot[data-slot="left"]:hover  { transform: translate(calc(-50% - 110px), calc(-50% - 10px)) scale(0.62); }
+.bn-slot[data-slot="right"]:hover { transform: translate(calc(-50% + 110px), calc(-50% - 10px)) scale(0.62); }
+
+.bn-slot[data-slot="off-left"],
+.bn-slot[data-slot="off-right"] {
+  opacity: 0;
+  filter: blur(5px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.bn-slot[data-slot="off-left"]  { transform: translate(calc(-50% - 200px), calc(-50% - 14px)) scale(0.3); }
+.bn-slot[data-slot="off-right"] { transform: translate(calc(-50% + 200px), calc(-50% - 14px)) scale(0.3); }

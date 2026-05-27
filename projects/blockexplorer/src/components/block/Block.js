@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { alchemy } from '../../AlchemyClient';
-import { CrystalCube } from '../crystal-cube/CrystalCube';
 import './Block.css';
 
 export function Block({ number, onSelectTx }) {
@@ -51,10 +50,7 @@ export function Block({ number, onSelectTx }) {
 
   return (
     <div className="BlockData">
-      <h2>
-        Block #{blockData.number}
-        <CrystalCube />
-      </h2>
+      <h2>Block #{blockData.number}</h2>
 
       <table>
         <tbody>

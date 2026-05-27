@@ -2,7 +2,7 @@ import './CrystalCube.css';
 
 export function CrystalCube() {
   return (
-    <span className="crystal-cube" aria-hidden="true">
+    <span className="crystal-cube">
       <span className="cube">
         <span className="face front"></span>
         <span className="face back"></span>

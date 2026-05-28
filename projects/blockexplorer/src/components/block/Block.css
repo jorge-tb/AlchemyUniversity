@@ -3,21 +3,22 @@
 }
 
 .BlockData h2 {
-  margin: 16px 0;
+  margin: 6px 0;
+  font-size: 18px;
 }
 
 .BlockData table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .BlockData td {
-  padding: 6px 12px;
+  padding: 3px 12px;
   border-bottom: 1px solid #eee;
   vertical-align: top;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 14px;
+  font-size: 13px;
   word-break: break-all;
 }
 

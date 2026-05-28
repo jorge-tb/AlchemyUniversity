@@ -11,13 +11,13 @@
 
 .app-header {
   border-bottom: 1px solid #eee;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .app-header h1 {
   margin: 0;
-  padding: 8px 0;
-  font-size: 20px;
+  padding: 4px 0;
+  font-size: 18px;
   font-weight: 600;
   color: #555;
   letter-spacing: 0.02em;

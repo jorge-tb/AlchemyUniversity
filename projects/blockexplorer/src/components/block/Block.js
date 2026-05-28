@@ -4,6 +4,7 @@ import './Block.css';
 
 export function Block({ number, onSelectTx }) {
   const [blockData, setBlockData] = useState();
+  const [txOpen, setTxOpen] = useState(false);
 
   useEffect(() => {
     if (number === undefined) return;
@@ -99,24 +100,31 @@ export function Block({ number, onSelectTx }) {
         </tbody>
       </table>
 
-      <details>
-        <summary>
+      <div className={`tx-section ${txOpen ? 'open' : ''}`}>
+        <button
+          type="button"
+          className="tx-toggle"
+          aria-expanded={txOpen}
+          onClick={() => setTxOpen((o) => !o)}
+        >
           Transactions ({blockData.transactions?.length ?? 0})
-        </summary>
-        <ul className="tx-list">
-          {blockData.transactions?.map((tx) => (
-            <li key={tx}>
-              <button
-                type="button"
-                className="tx-link"
-                onClick={() => onSelectTx?.(tx)}
-              >
-                {tx}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </details>
+        </button>
+        <div className="tx-collapse">
+          <ul className="tx-list">
+            {blockData.transactions?.map((tx) => (
+              <li key={tx}>
+                <button
+                  type="button"
+                  className="tx-link"
+                  onClick={() => onSelectTx?.(tx)}
+                >
+                  {tx}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }

@@ -3,27 +3,27 @@
 }
 
 .BlockData h2 {
-  margin: 6px 0;
-  font-size: 18px;
+  margin: clamp(6px, 0.6vw, 14px) 0;
+  font-size: clamp(18px, calc(0.6vw + 10px), 26px);
 }
 
 .BlockData table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 8px;
+  margin-bottom: clamp(8px, 0.8vw, 16px);
 }
 
 .BlockData td {
-  padding: 3px 12px;
+  padding: clamp(3px, calc(0.2vw + 1px), 9px) clamp(12px, calc(0.4vw + 6px), 20px);
   border-bottom: 1px solid #eee;
   vertical-align: top;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 13px;
+  font-size: clamp(13px, calc(0.4vw + 8px), 17px);
   word-break: break-all;
 }
 
 .BlockData td:first-child {
-  width: 180px;
+  width: clamp(180px, 14vw, 260px);
   font-weight: 600;
   font-family: inherit;
   color: #555;
@@ -35,8 +35,9 @@
   text-align: left;
   background: none;
   border: none;
-  padding: 6px 0;
+  padding: clamp(6px, 0.5vw, 12px) 0;
   font: inherit;
+  font-size: clamp(14px, calc(0.4vw + 9px), 18px);
   font-weight: 600;
   color: inherit;
   cursor: pointer;
@@ -60,14 +61,14 @@
 }
 
 .tx-section.open .tx-collapse {
-  max-height: 380px;
+  max-height: clamp(380px, 40vh, 720px);
 }
 
 .tx-list {
   list-style: none;
   padding: 0;
   margin: 12px 0 0;
-  max-height: 360px;
+  max-height: clamp(360px, 38vh, 700px);
   overflow-y: auto;
   border: 1px solid #eee;
   border-radius: 4px;
@@ -87,9 +88,9 @@
   text-align: left;
   background: none;
   border: none;
-  padding: 6px 12px;
+  padding: clamp(6px, calc(0.3vw + 3px), 10px) clamp(12px, calc(0.4vw + 6px), 20px);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 13px;
+  font-size: clamp(13px, calc(0.3vw + 9px), 16px);
   color: #0366d6;
   cursor: pointer;
   word-break: break-all;

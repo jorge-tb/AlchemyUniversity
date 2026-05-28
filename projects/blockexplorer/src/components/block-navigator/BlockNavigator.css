@@ -1,4 +1,5 @@
 .block-navigator {
+  margin-top: auto;
   height: 140px;
   display: flex;
   align-items: center;

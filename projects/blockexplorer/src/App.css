@@ -1,8 +1,8 @@
 .App {
   min-height: 100vh;
-  max-width: 960px;
+  max-width: clamp(960px, 80vw, 1800px);
   margin: 0 auto;
-  padding: 24px;
+  padding: clamp(24px, 2vw, 48px);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -11,13 +11,13 @@
 
 .app-header {
   border-bottom: 1px solid #eee;
-  margin-bottom: 8px;
+  margin-bottom: clamp(8px, 0.8vw, 16px);
 }
 
 .app-header h1 {
   margin: 0;
-  padding: 4px 0;
-  font-size: 18px;
+  padding: clamp(4px, 0.4vw, 10px) 0;
+  font-size: clamp(18px, calc(0.6vw + 10px), 26px);
   font-weight: 600;
   color: #555;
   letter-spacing: 0.02em;

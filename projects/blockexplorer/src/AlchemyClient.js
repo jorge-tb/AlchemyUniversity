@@ -8,6 +8,14 @@ const settings = {
   network: Network.ETH_MAINNET,
 };
 
+const NETWORK_LABELS = {
+  [Network.ETH_MAINNET]: 'Ethereum Mainnet',
+  [Network.ETH_SEPOLIA]: 'Ethereum Sepolia',
+  [Network.ETH_HOLESKY]: 'Ethereum Holesky',
+};
+
+export const networkLabel = NETWORK_LABELS[settings.network] ?? settings.network;
+
 // In this week's lessons we used ethers.js. Here we are using the
 // Alchemy SDK is an umbrella library with several different packages.
 //

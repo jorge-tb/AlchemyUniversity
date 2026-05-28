@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { alchemy } from './AlchemyClient';
+import { alchemy, networkLabel } from './AlchemyClient';
 import { Block } from './components/block/Block';
 import { BlockNavigator } from './components/block-navigator/BlockNavigator';
 import { Transaction } from './components/transaction/Transaction';
@@ -25,6 +25,9 @@ function App() {
 
   return (
     <div className="App">
+      <header className="app-header">
+        <h1>{networkLabel}</h1>
+      </header>
       {selectedTx ? (
         <Transaction hash={selectedTx} onBack={() => setSelectedTx(null)} />
       ) : (

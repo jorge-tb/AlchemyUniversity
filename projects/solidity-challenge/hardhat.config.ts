@@ -31,8 +31,8 @@ export default defineConfig({
     sepolia: {
       type: "http",
       chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      url: configVariable("ALCHEMY_SEPOLIA_RPC_URL"),
+      accounts: [configVariable("TESTNET_PRIVATE_KEY")],
     },
   },
 });

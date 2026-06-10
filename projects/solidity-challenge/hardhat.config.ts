@@ -6,7 +6,10 @@ export default defineConfig({
   solidity: {
     profiles: {
       default: {
-        version: "0.8.28",
+        compilers: [
+          { version: "0.8.0" },
+          { version: "0.8.28" }
+        ]
       },
       production: {
         version: "0.8.28",

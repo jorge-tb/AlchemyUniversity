@@ -1,0 +1,28 @@
+{
+  "name": "solidity-challenge",
+  "version": "1.0.0",
+  "description": "It's a Hardhat-based project that aims to solve the Solidity challenge proposed by Alchemy University in its Ethereum bootcamp 4th week.",
+  "keywords": [
+    "web3",
+    "hardhat",
+    "ethereum",
+    "alchemy",
+    "alchemy-university"
+  ],
+  "license": "MIT",
+  "author": "Jorge Tomé Blanco",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^3.1.7",
+    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.7",
+    "@types/node": "^22.19.20",
+    "forge-std": "github:foundry-rs/forge-std#v1.9.4",
+    "hardhat": "^3.9.0",
+    "typescript": "~6.0.3",
+    "viem": "^2.52.2"
+  }
+}

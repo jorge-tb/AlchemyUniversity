@@ -18,7 +18,6 @@ describe('Contract', async () => {
 
     it('Should revert transaction when calling the attempt() from EOA', async () => {
         const contract = await viem.deployContract('Contract');
-        // viem.assertions.revert(contract.write.attempt());
         viem.assertions.revertWith(contract.write.attempt(), 'msg.sender is equal to tx.origin');
     });
 });

@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import deploy from './deploy';
 import Escrow from './Escrow';
+import Address from './Address';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 
@@ -10,21 +11,49 @@ export async function approve(escrowContract, signer) {
   await approveTxn.wait();
 }
 
+const FILTERS = ['all', 'pending', 'approved'];
+
 function App() {
   const [escrows, setEscrows] = useState([]);
   const [account, setAccount] = useState();
   const [signer, setSigner] = useState();
+  const [filter, setFilter] = useState('all');
+
+  function markApproved(address) {
+    setEscrows((prev) =>
+      prev.map((e) => (e.address === address ? { ...e, approved: true } : e))
+    );
+  }
 
   useEffect(() => {
+    function applyAccount(address) {
+      if (address) {
+        setAccount(address);
+        setSigner(provider.getSigner());
+      } else {
+        // wallet locked / all accounts disconnected
+        setAccount(undefined);
+        setSigner(undefined);
+      }
+    }
+
     async function getAccounts() {
       const accounts = await provider.send('eth_requestAccounts', []);
-
-      setAccount(accounts[0]);
-      setSigner(provider.getSigner());
+      applyAccount(accounts[0]);
     }
 
     getAccounts();
-  }, [account]);
+
+    // Reflect account switches made in the MetaMask extension.
+    function handleAccountsChanged(accounts) {
+      applyAccount(accounts[0]);
+    }
+
+    window.ethereum.on('accountsChanged', handleAccountsChanged);
+    return () => {
+      window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+    };
+  }, []);
 
   async function newContract() {
     const beneficiary = document.getElementById('beneficiary').value;
@@ -37,63 +66,114 @@ function App() {
       arbiter,
       beneficiary,
       value: valueInWei.toString(),
+      approved: false,
       handleApprove: async () => {
         escrowContract.on('Approved', () => {
-          document.getElementById(escrowContract.address).className =
-            'complete';
-          document.getElementById(escrowContract.address).innerText =
-            "✓ It's been approved!";
+          markApproved(escrowContract.address);
         });
 
         await approve(escrowContract, signer);
       },
     };
 
-    setEscrows([...escrows, escrow]);
+    setEscrows((prev) => [...prev, escrow]);
   }
 
+  const counts = {
+    all: escrows.length,
+    pending: escrows.filter((e) => !e.approved).length,
+    approved: escrows.filter((e) => e.approved).length,
+  };
+
+  const visible = escrows.filter((e) => {
+    if (filter === 'pending') return !e.approved;
+    if (filter === 'approved') return e.approved;
+    return true;
+  });
+
   return (
-    <>
-      <div className="contract">
-        <h1> New Contract </h1>
-        <label>
-          Arbiter Address
-          <input type="text" id="arbiter" />
-        </label>
+    <div className="app">
+      <header className="app-header">
+        <div className="brand">
+          <div className="brand-mark" />
+          <h1 className="brand-title">
+            ESCR<span>OW</span>
+          </h1>
+        </div>
 
-        <label>
-          Beneficiary Address
-          <input type="text" id="beneficiary" />
-        </label>
+        <div className="wallet">
+          <span className={`wallet-pill ${account ? '' : 'disconnected'}`}>
+            <span className="dot" />
+            {account ? 'Connected' : 'Connecting…'}
+          </span>
+          {account ? <Address value={account} className="wallet-address" /> : null}
+        </div>
+      </header>
 
-        <label>
-          Deposit Amount (in Ether)
-          <input type="text" id="ether" />
-        </label>
+      <div className="grid">
+        <div className="panel contract">
+          <h1>New Contract</h1>
+          <label>
+            Arbiter Address
+            <input type="text" id="arbiter" placeholder="0x…" />
+          </label>
 
-        <div
-          className="button"
-          id="deploy"
-          onClick={(e) => {
-            e.preventDefault();
+          <label>
+            Beneficiary Address
+            <input type="text" id="beneficiary" placeholder="0x…" />
+          </label>
 
-            newContract();
-          }}
-        >
-          Deploy
+          <label>
+            Deposit Amount (in Ether)
+            <input type="text" id="ether" placeholder="0.0" />
+          </label>
+
+          <div
+            className="button"
+            id="deploy"
+            onClick={(e) => {
+              e.preventDefault();
+
+              newContract();
+            }}
+          >
+            Deploy
+          </div>
+        </div>
+
+        <div className="panel existing-contracts">
+          <div className="contracts-head">
+            <h1>Existing Contracts</h1>
+            <div className="contracts-tabs">
+              {FILTERS.map((f) => (
+                <button
+                  key={f}
+                  className={`tab ${filter === f ? 'active' : ''}`}
+                  onClick={() => setFilter(f)}
+                >
+                  {f}
+                  <span className="tab-count">{counts[f]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div id="container" className="contracts-list">
+            {escrows.length === 0 ? (
+              <div className="empty-state">
+                No contracts yet — deploy one to get started.
+              </div>
+            ) : visible.length === 0 ? (
+              <div className="empty-state">No {filter} contracts.</div>
+            ) : (
+              visible.map((escrow) => {
+                return <Escrow key={escrow.address} {...escrow} />;
+              })
+            )}
+          </div>
         </div>
       </div>
-
-      <div className="existing-contracts">
-        <h1> Existing Contracts </h1>
-
-        <div id="container">
-          {escrows.map((escrow) => {
-            return <Escrow key={escrow.address} {...escrow} />;
-          })}
-        </div>
-      </div>
-    </>
+    </div>
   );
 }
 

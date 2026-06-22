@@ -1,5 +1,7 @@
 class Contract {
-    constructor(depositor, arbiter, beneficiary, isApproved) {
+    constructor(address, value, depositor, arbiter, beneficiary, isApproved) {
+        this.address = address;
+        this.value = value;
         this.depositor = depositor;
         this.arbiter = arbiter;
         this.beneficiary = beneficiary;

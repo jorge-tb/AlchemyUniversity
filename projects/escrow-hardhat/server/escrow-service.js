@@ -14,7 +14,6 @@ class EscrowService {
 
     async find(deployer) {
         const escrowsInfo = await this._findInfo(deployer);
-        const escrowAddresses = escrowsInfo.map(e => e.escrow);
 
         const abi = [
             "function isApproved() view returns (bool)",
@@ -25,14 +24,19 @@ class EscrowService {
 
         const contracts = [];
         const provider = await this.alchemyClient.config.getProvider();
-        for (const addr of escrowAddresses) {
-            const escrow = new Contract(addr, abi, provider);
+        for (const { escrow: address, deployTx } of escrowsInfo) {
+            const txValue = provider.getTransaction(deployTx).then(r => r.value.toString());
+            const escrow = new Contract(address, abi, provider);
+
             const properties = await Promise.all([
-                await escrow.depositor(),
-                await escrow.arbiter(),
-                await escrow.beneficiary(),
-                await escrow.isApproved()
+                address,
+                txValue,
+                escrow.depositor(),
+                escrow.arbiter(),
+                escrow.beneficiary(),
+                escrow.isApproved()
             ]);
+            
             contracts.push(new ContractDTO(...properties));
         }
 

@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import deploy from './deploy';
 import Escrow from './Escrow';
+import EscrowArtifact from './artifacts/contracts/Escrow.sol/Escrow';
 import Address from './Address';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -26,14 +27,51 @@ function App() {
   }
 
   useEffect(() => {
+    // Pull the escrows this account has already deployed from the server and
+    // rebuild them into the same shape the UI uses for freshly-deployed ones.
+    async function loadDeployed(address, currentSigner) {
+      try {
+        const res = await fetch(`/contracts/${address}`);
+        if (!res.ok) throw new Error(`server responded ${res.status}`);
+        const deployed = await res.json();
+
+        setEscrows(
+          deployed.map((c) => {
+            const escrowContract = new ethers.Contract(
+              c.address,
+              EscrowArtifact.abi,
+              provider
+            );
+
+            return {
+              address: c.address,
+              arbiter: c.arbiter,
+              beneficiary: c.beneficiary,
+              value: c.value,
+              approved: c.isApproved,
+              handleApprove: async () => {
+                escrowContract.on('Approved', () => markApproved(c.address));
+                await approve(escrowContract, currentSigner);
+              },
+            };
+          })
+        );
+      } catch (err) {
+        console.error('Failed to load deployed contracts from server:', err);
+      }
+    }
+
     function applyAccount(address) {
       if (address) {
+        const nextSigner = provider.getSigner();
         setAccount(address);
-        setSigner(provider.getSigner());
+        setSigner(nextSigner);
+        loadDeployed(address, nextSigner);
       } else {
         // wallet locked / all accounts disconnected
         setAccount(undefined);
         setSigner(undefined);
+        setEscrows([]);
       }
     }
 

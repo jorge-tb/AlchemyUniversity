@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { Alchemy, Network, Utils } from 'alchemy-sdk';
 import { useState } from 'react';
+import { WalletButton } from './components/WalletButton';
 
 function App() {
   const [userAddress, setUserAddress] = useState('');
@@ -43,6 +44,9 @@ function App() {
   }
   return (
     <Box w="100vw">
+      <Flex justifyContent="flex-end" p={4}>
+        <WalletButton />
+      </Flex>
       <Center>
         <Flex
           alignItems={'center'}

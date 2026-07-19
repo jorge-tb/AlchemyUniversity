@@ -1,0 +1,1 @@
+export interface Eip6963AnnounceProviderEvent extends CustomEvent {}

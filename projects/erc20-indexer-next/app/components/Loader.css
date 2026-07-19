@@ -1,0 +1,17 @@
+.loader {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid var(--loader-track, #e5e7eb);   /* faint ring */
+  border-top-color: var(--loader-accent, #6366f1);  /* colored arc */
+  border-radius: 50%;
+  animation: loader-spin 0.7s linear infinite;
+}
+
+@keyframes loader-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* accessibility: don't spin aggressively for motion-sensitive users */
+@media (prefers-reduced-motion: reduce) {
+  .loader { animation-duration: 2.4s; }
+}

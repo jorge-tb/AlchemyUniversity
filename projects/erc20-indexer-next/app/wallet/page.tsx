@@ -93,59 +93,92 @@ export default function  WalletConnection() {
     }
 
     return (
-        <>
-        <p>Connect your wallet</p>
-        { wallets.size ? 
-            <ul>
-                { [...wallets.keys()].map((k, i) => 
+        <main className="mx-auto flex max-w-2xl flex-col gap-6 px-6 py-12">
+        <header className="flex flex-col gap-1">
+            <h1 className="text-2xl font-semibold tracking-tight">Token Indexer</h1>
+            <p className="text-sm text-muted">Connect a wallet to read its ERC-20 balances.</p>
+        </header>
+        { wallets.size ?
+            <ul className="flex flex-wrap gap-3">
+                { [...wallets.keys()].map((k, i) =>
                     <li key={wallets.get(k)?.info.uuid}>
-                        <button onClick={() => connect(k)}>
-                        <img src={wallets.get(k)?.info.icon} alt={k} width={95} height={95}></img>
+                        <button
+                            onClick={() => connect(k)}
+                            className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium transition hover:border-accent hover:shadow-sm"
+                        >
+                        <img src={wallets.get(k)?.info.icon} alt={k} width={95} height={95} className="h-8 w-8 rounded-md"></img>
                         {k}
                         </button>
-                    </li>) 
+                    </li>)
                 }
             </ul> :
-            <p>There's no available wallet</p>
+            <p className="text-sm text-muted">No wallet detected. Install MetaMask or another browser wallet.</p>
         }
         {
-            rpcSigner && <p>{rpcSigner.address} with {selected?.name}</p>  
+            rpcSigner &&
+            <div className="rounded-xl border border-border bg-card p-4">
+                <p className="text-xs uppercase tracking-wide text-muted">Connected account</p>
+                <p className="mt-1 break-all font-mono text-sm">{rpcSigner.address}</p>
+                <p className="mt-1 text-xs text-muted">via {selected?.name}</p>
+            </div>
         }
         {
-            network && 
-            <section>
-            <h2>Connected to</h2>
-            <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '0.25rem 0.75rem', margin: 0 }}>
-                <dt>Name</dt>
-                <dd style={{ margin: 0 }}>{network.name}</dd>
-                <dt>Chain ID</dt>
-                <dd style={{ margin: 0 }}>{network.chainId.toString()}</dd>
+            network &&
+            <section className="rounded-xl border border-border bg-card p-4">
+            <h2 className="text-xs uppercase tracking-wide text-muted">Connected to</h2>
+            <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
+                <dt className="text-muted">Name</dt>
+                <dd className="font-medium">{network.name}</dd>
+                <dt className="text-muted">Chain ID</dt>
+                <dd className="font-mono">{network.chainId.toString()}</dd>
             </dl>
             </section>
         }
         {
-            balance && <p>Balance: {balance} Sepolia ETH</p>
+            balance &&
+            <div className="rounded-xl border border-border bg-card p-4">
+                <p className="text-xs uppercase tracking-wide text-muted">Balance</p>
+                <p className="mt-1 font-mono text-lg font-semibold">{balance} <span className="text-sm font-normal text-muted">ETH</span></p>
+            </div>
         }
         {
-            selected && <button onClick={() => loadTokenBalances()}>Load ERC-20 Token Balances</button> 
+            selected &&
+            <button
+                onClick={() => loadTokenBalances()}
+                className="self-start rounded-xl bg-accent px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
+            >
+                Load ERC-20 token balances
+            </button>
         }
         {
-            isLoading && <Loader />
+            isLoading && <div className="flex justify-center py-8"><Loader /></div>
         }
         {
-            tokenBalances.length > 0 && 
-            <ul>
+            tokenBalances.length > 0 &&
+            <section className="flex flex-col gap-3">
+                <h2 className="text-sm font-medium text-muted">{tokenBalances.length} tokens</h2>
+                <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 { tokenBalances.map((v, i) =>
-                    <li key={v.contractAddress}>
-                        Contract: {v.contractAddress}
-                        <br />
-                        Balance: {v.tokenBalance}
-                        <br />
-                        Metadata: {JSON.stringify(v.metadata)}
+                    <li key={v.contractAddress} className="rounded-xl border border-border bg-card p-4">
+                        <div className="flex items-center gap-3">
+                            { v.metadata.logo ?
+                                <img src={v.metadata.logo} alt={v.metadata.symbol} className="h-8 w-8 rounded-full" /> :
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-border text-xs font-semibold">
+                                    {v.metadata.symbol?.slice(0, 3) || '?'}
+                                </div>
+                            }
+                            <div className="min-w-0">
+                                <p className="truncate font-medium">{v.metadata.symbol || 'Unknown'}</p>
+                                <p className="truncate text-xs text-muted">{v.metadata.name || 'Unnamed token'}</p>
+                            </div>
+                        </div>
+                        <p className="mt-3 font-mono text-lg font-semibold">{v.tokenBalance}</p>
+                        <p className="mt-2 break-all font-mono text-[11px] text-muted">{v.contractAddress}</p>
                     </li>
                 )}
-            </ul>
+                </ul>
+            </section>
         }
-        </>
+        </main>
     );
 }

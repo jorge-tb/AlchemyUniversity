@@ -1,4 +1,4 @@
-import { Address } from "@/ethereum/types/address";
+import { Address } from "@/app/ethereum/types/address";
 
 export interface TokenAllowanceRequest {
     contract: Address;

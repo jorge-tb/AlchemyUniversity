@@ -1,4 +1,4 @@
-import { Address } from "@/ethereum/types/address";
+import { Address } from "@/app/ethereum/types/address";
 
 type TOKEN_SPEC = 'erc20' | 'NATIVE_TOKEN';
 

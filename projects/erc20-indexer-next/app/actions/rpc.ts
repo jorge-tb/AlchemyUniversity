@@ -1,11 +1,12 @@
 'use server'
 
 import { JsonRpcProvider, formatEther } from "ethers"
-import { ChainId } from "@/ethereum/constants/chainId";
+import { ChainId } from "@/app/ethereum/constants/chainId";
 import { AlchemyTokenProvider } from "../alchemy/alchemy-token-provider";
-import { Address } from "@/ethereum/types/address";
+import { Address } from "@/app/ethereum/types/address";
 import { TokenBalanceExtended } from "../transactionals/token-balance-extended";
-import { ethers } from 'ethers';
+import { ethers, isError } from 'ethers';
+import { withRetry } from "../utils/retry";
 
 const {
     ALCHEMY_API_KEY,
@@ -17,15 +18,17 @@ if (!ALCHEMY_API_KEY || !ALCHEMY_ETH_MAINNET_RPC_URL || !ALCHEMY_ETH_SEPOLIA_RPC
     throw new Error('Missing Alchemy env vars');
 }
 
-const mainnetProvider = new JsonRpcProvider(ALCHEMY_ETH_MAINNET_RPC_URL + ALCHEMY_API_KEY);
-const sepoliaProvider = new JsonRpcProvider(ALCHEMY_ETH_SEPOLIA_RPC_URL + ALCHEMY_API_KEY);
+const isTimeout = (err: unknown): boolean => isError(err, 'TIMEOUT');
+
+const mainnetProvider = new JsonRpcProvider(ALCHEMY_ETH_MAINNET_RPC_URL + ALCHEMY_API_KEY, ChainId.Mainnet, { staticNetwork: true });
+const sepoliaProvider = new JsonRpcProvider(ALCHEMY_ETH_SEPOLIA_RPC_URL + ALCHEMY_API_KEY, ChainId.Sepolia, { staticNetwork: true });
 
 export async function getBalance(address: Address, chainId: bigint) {
     // Select RPC provider
     const rpcProvider = resolveRpcProvider(chainId);
 
     // Call getBalance
-    const balance = await rpcProvider.getBalance(address);
+    const { result: balance } = await withRetry(() => rpcProvider.getBalance(address), isTimeout, 3);
 
     // Return balance in ETH
     return formatEther(balance);

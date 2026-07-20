@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Eip6963AnnounceProviderEvent } from '@/ethereum/eip6963/Eip6963AnnounceProviderEvent';
-import { Eip6963ProviderDetail } from '@/ethereum/eip6963/Eip6963ProviderDetail';
+import { Eip6963AnnounceProviderEvent } from '@/app/ethereum/eip6963/Eip6963AnnounceProviderEvent';
+import { Eip6963ProviderDetail } from '@/app/ethereum/eip6963/Eip6963ProviderDetail';
 import { JsonRpcSigner, Network, ethers } from 'ethers';
 import { getBalance, getTokenBalances } from '../actions/rpc';
-import { Address, toAddress } from '@/ethereum/types/address';
+import { Address, toAddress } from '@/app/ethereum/types/address';
 import { Loader, withLoader } from '../components/Loader';
 import { TokenBalanceExtended } from '../transactionals/token-balance-extended';
-import { Eip1193ProviderWithEvents } from '@/ethereum/eip6963/Eip1193ProviderWithEvents';
+import { Eip1193ProviderWithEvents } from '@/app/ethereum/eip6963/Eip1193ProviderWithEvents';
 
 export default function  WalletConnection() {
     const [wallets, setWallets] = useState(new Map<string, Eip6963ProviderDetail>());
@@ -43,15 +43,36 @@ export default function  WalletConnection() {
         }
     }, []);
 
+    const _updateProviderState = async (provider: Eip1193ProviderWithEvents, chainIdOverride?: bigint) => {
+        // Build BrowserProvider
+        const browserProvider = new ethers.BrowserProvider(provider);
+
+        // Get RPC signer through popup wallet native flow
+        const rpcSigner = await browserProvider.getSigner();
+        setRpcSigner(rpcSigner);
+
+        // Obtain network through Browser provider
+        const network = chainIdOverride ? Network.from(chainIdOverride) :  await browserProvider.getNetwork();
+        setNetwork(network);
+
+        // Obtain balance through server + alchemy rpc provider
+        const balance = await getBalance(toAddress(rpcSigner.address), network.chainId);
+        setBalance(balance);
+    }
+
     const _configureListeners = (provider: Eip1193ProviderWithEvents) => {
         provider.on('connect', (e) => console.log('[Connect]', e));
         provider.on('disconnect', (e) => console.log('[Disconnect]', e));
         provider.on('chainChanged', (e) => {
             console.log('[ChainChanged]', e);
-            setNetwork(Network.from(e));
+
+            // Update provider state variables
+            withLoader(_updateProviderState(provider), setIsLoading);
         });
         provider.on('accountsChanged', (e) => {
             console.log('[AccountsChanged]', e);
+
+            // Update accounts
             setAccounts(e);
         });
     }
@@ -64,23 +85,11 @@ export default function  WalletConnection() {
         // Configure event listeners
         _configureListeners(selectedProvider);
 
-        // Build BrowserProvider
-        const browserProvider = new ethers.BrowserProvider(selectedProvider);
-
-        // Get RPC signer through popup wallet native flow
-        const rpcSigner = await browserProvider.getSigner();
-        setRpcSigner(rpcSigner);
-
-        // Obtain network through Browser provider
-        const network = await browserProvider.getNetwork();
-        setNetwork(network);
-
-        // Obtain balance through server + alchemy rpc provider
-        const balance = await getBalance(toAddress(rpcSigner.address), network.chainId);
-        setBalance(balance)
+        // Update provider state variables
+        _updateProviderState(selectedProvider);
     }
 
-    const loadTokenBalances = async () => {
+    const loadTokenBalances = async () => {2
         if (!rpcSigner)
             throw new Error(`User has to connect their account`);
         if (!network)
